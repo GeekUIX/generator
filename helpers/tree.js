@@ -2,19 +2,21 @@
 
 const path = require('path');
 const fs = require('./fs');
+const prompt = require('./prompt');
 
-module.exports = async function copy(root, src, dest, list) {
+module.exports = async function tree(src, list) {
   list = typeof list === 'undefined' ? [] : list;
+
   const sourceStat = await fs.statAsync(src);
+
   if (sourceStat.isDirectory()) {
-    await fs.mkdirAsync(dest);
     const children = await fs.readdirAsync(src);
     await Promise.all(children.map(child => {
-      return copy(root, path.join(src, child), path.join(dest, child), list);
+      return tree(path.join(src, child), list);
     }));
   } else {
-    await fs.linkAsync(src, dest);
-    list.push(dest);
+    list.push(src);
   }
+
   return list;
 }

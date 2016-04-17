@@ -3,16 +3,15 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function rename(root, mappings, files) {
+module.exports = function rename(root, rename, files) {
   return files.map(filepath => {
-    for (let item in mappings) {
+    for (let item in rename) {
       const src = path.join(root, item);
       if (filepath === src) {
-        const dest = path.join(root, mappings[item]);
-        fs.renameSync(src, dest);
-        return dest;
+        return path.join(root, rename[item]);
       }
     }
+
     return filepath;
   });
 }
